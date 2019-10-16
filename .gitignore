@@ -1,0 +1,24 @@
+# MySQL Exporter Tool
+# > .gitignore
+# 
+# Package: net.ikigai.ops.mysql.tools
+# Author: Narcis M PAP, Aug 2018
+
+nbproject
+nb-configuration.xml
+Session.vim
+*.tmproj
+*.tmproject
+tmtags
+Thumbs.db
+Desktop.ini
+.DS_Store
+/.idea
+*.pyc
+/.vscode
+
+/secrets/*
+!/secrets/git.empty
+
+/run-*.sh
+!/run-example.sh

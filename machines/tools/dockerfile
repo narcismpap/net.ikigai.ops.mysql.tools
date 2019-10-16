@@ -1,0 +1,35 @@
+# MySQL Exporter Tool
+# > Tools Dockerfile
+# 
+# Package: net.ikigai.ops.mysql.tools
+# Author: Narcis M PAP, Aug 2018
+
+FROM ubuntu:18.04
+
+ARG BUILD_TYPE=prd
+ARG MYSQL_PORT=3306
+
+ENV DEBIAN_FRONTEND noninteractive
+ENV LANG C.UTF-8
+ENV TIMEZONE Europe/London
+
+# run with https://github.com/sameersbn/docker-apt-cacher-ng
+RUN if [ "${BUILD_TYPE}" = 'dev' ]; then \
+        echo 'Acquire::HTTP::Proxy "http://172.17.0.1:3142";' >> /etc/apt/apt.conf.d/01proxy \
+        && echo 'Acquire::HTTPS::Proxy "false";' >> /etc/apt/apt.conf.d/01proxy; \
+fi;
+
+RUN apt-get update \
+        && apt-get install -yy \
+                mysql-client-5.7 \
+        && apt-get install -yy --no-install-recommends \
+                python3 \
+        && apt-get -y autoremove \
+        && apt-get -y clean \
+        && rm -rf /var/lib/apt/lists/*
+
+COPY ./tools /tools
+COPY ./vadb.sh /usr/bin/vadb
+
+ENV MYSQL_PORT="${MYSQL_PORT}"
+ENTRYPOINT ["/bin/bash", "/tools/entrypoint.sh"]

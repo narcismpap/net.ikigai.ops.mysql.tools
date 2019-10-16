@@ -1,0 +1,8 @@
+# MySQL Exporter Tool
+# > MySQL 5.6 Docker
+# 
+# Package: net.ikigai.ops.mysql.tools
+# Author: Narcis M PAP, Aug 2018
+
+FROM mysql:5.7.23
+COPY ./mysql /etc/mysql

@@ -1,0 +1,53 @@
+# MySQL Exporter Tool
+# > Docker Compose
+# 
+# Package: net.ikigai.ops.mysql.tools
+# Author: Narcis M PAP, Aug 2018
+
+version: '3.7'
+
+services:
+
+  db:
+    build: 
+      context: ./machines/db
+    volumes:
+      - ${VASQL_SOURCE}:/docker-entrypoint-initdb.d:ro
+      - ${VASQL_MYSQL}:/var/lib/mysql:delegated
+    environment:
+      MYSQL_ROOT_PASSWORD_FILE: /run/secrets/db_root
+      MYSQL_ROOT_HOST: "%"
+    ports:
+      - "${VASQL_PORT:-3306}:3306"
+    expose:
+      - "${VASQL_PORT:-3306}"
+    secrets:
+      - db_root
+    networks:
+      - wi_net
+
+  tools:
+    build: 
+      context: ./machines/tools
+      args:
+        BUILD_TYPE: dev
+        MYSQL_PORT: "${VASQL_PORT:-3306}"
+    volumes:
+      - ${VASQL_OUTPUT}:/output:rw
+    depends_on:
+      - db
+    environment:
+      MYSQL_ROOT_PASSWORD_FILE: /run/secrets/db_root
+    secrets:
+      - db_root
+    networks:
+      - wi_net
+
+secrets:
+  db_root:
+      file: ./secrets/db_root.txt
+
+networks:
+  wi_net:
+    internal: true
+  
